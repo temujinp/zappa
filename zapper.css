@@ -1,0 +1,29 @@
+.table { 
+    display: table; 
+    border-width: 1px;
+    border-color: #000000;   
+    margin: 0 auto;
+}
+.row { 
+    display: table-row; 
+    padding: 2px;
+    border-width: 1px;
+    border-color: transparent;                
+}
+.cell { 
+    display: table-cell; 
+    padding: 2px;
+    border :1px;
+    border-width: 1px;
+    border-color: #000000;  
+}
+th {
+    background-color: #bbd2df;
+    padding: 2px;
+}
+.heading { 
+    display: table-row; 
+    padding: 2px;
+    border-width: 1px;
+    border-color: transparent;                
+}

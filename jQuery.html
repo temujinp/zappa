@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Zapper Display Data</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+
+        <link rel="stylesheet" type="text/css" href="zapper.css">
+        <!-- Good Practice : Always use a library (with an active community) which already has the needed functionality -->
+        <script src="jquery-1.12.3.min.js"></script>
+        
+        <!-- Good Practice : Layout always done by div -->
+        <div class="table">
+            <div class="row">
+                <div class="cell">
+                    Zapper Display Data <a href="javascript:displayData(0);">Portrait</a> | <a href="javascript:displayData(1);">Landscape</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="cell">
+
+                    <div class="table">
+                        <div class="row">
+                            <div class="cell" id="persons">
+
+                                <!-- Good Practice : Table for tabulated data only -->
+                                <table id="personTable" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>                                
+                                        </tr>
+                                    </tfoot>
+                                </table>            
+
+                            </div>
+                            
+                            <div class="cell">&nbsp;&nbsp;</div>
+                            
+                            <div class="cell" id="person">
+
+                                <form>
+                                    <div class="table">
+                                        <div class="row">
+                                            <div class="cell">
+                                                Id : 
+                                            </div>
+                                            <div class="cell">
+                                                <input type="text" id="person_id"/>
+                                            </div>                                
+                                        </div>        
+                                        <div class="row">
+                                            <div class="cell">
+                                                First Name :
+                                            </div>
+                                            <div class="cell">
+                                                <input type="text" id="person_firstName"/>
+                                            </div>                                
+                                        </div>        
+                                        <div class="row">
+                                            <div class="cell">
+                                                Last Name : 
+                                            </div>
+                                            <div class="cell">
+                                                <input type="text" id="person_lastName"/>
+                                            </div>                                
+                                        </div>        
+                                        <div class="row">
+                                            <div class="cell">
+                                                Age : 
+                                            </div>
+                                            <div class="cell">
+                                                <input type="text" id="person_age"/>
+                                            </div>                                
+                                        </div>        
+                                        <div class="row">
+                                            <div class="cell">
+                                                Favourite Colour : 
+                                            </div>
+                                            <div class="cell">
+                                                <input type="text" id="person_favouriteColour"/>
+                                            </div>                                
+                                        </div>                                    
+                                    </div>                    
+                                </form>
+
+                            </div>
+                        </div>        
+                    </div>
+
+                </div>
+            </div>     
+            <div class="row">
+                <div class="cell" style="text-align: center">
+                    <br/>
+                    <span style="font-weight:bold;">Refresh :</span> <span id="refresh"></span>
+                </div>
+            </div>            
+        </div>        
+
+        <br/>
+        
+        <div id="console"></div>
+                
+        <script>
+            // Person collection
+            function retrievePersons() {
+                var d = "" + new Date();                
+                $("#refresh").text(d.substring(0, d.indexOf("GMT")));
+                jQuery.ajax({
+                    type: "GET",
+                    url: "http://demo4012764.mockable.io/person",
+                    dataType: "json",
+                    data: {format: 'json'},
+                    success: function (data, status, jqXHR) {
+                        // Populate the table
+                        var personTable = $("#personTable");
+                        $("#personTable").empty();
+                        personTable.append("<thead><tr><th>Id</th><th>First Name</th><th>Last Name</th></tr></thead>");
+                        $.each(data, function (i, value) {
+                            personTable.append("<tr><td><a href='javascript:selectPerson(" + value["id"] + ");displayData(1);'>" + value["id"] + "</a></td><td>" + value["firstName"] + "</td><td>" + value["lastName"] + "</td></tr>");
+                        });
+                    },
+                    error: function (jqXHR, status) {
+                        var console = $("#console");
+//                        console.append("status : " + status);
+//                        console.append("error : " + jqXHR);
+                    }
+                });
+                // Refresh every 5 seconds
+                setTimeout(arguments.callee, 5000);
+            }
+            retrievePersons();
+
+            // Person single
+            function selectPerson(id) {
+                jQuery.ajax({
+                    type: "GET",
+                    url: "http://demo4012764.mockable.io/person/" + id,
+                    dataType: "json",
+                    data: {format: 'json'},
+                    success: function (data, status, jqXHR) {
+                        // Populate the form
+                        $("#person_id").val(data["id"]);
+                        $("#person_firstName").val(data["firstName"]);
+                        $("#person_lastName").val(data["lastName"]);
+                        $("#person_age").val(data["age"]);
+                        $("#person_favouriteColour").val(data["favouriteColour"]);
+                    },
+                    error: function (jqXHR, status) {
+                        var console = $("#console");
+//                        console.append("status : " + status);
+//                        console.append("error : " + jqXHR);
+                    }
+                });
+            }
+
+            function displayData(porl){
+                if(porl == "0"){
+                    $("#persons").show();
+                    $("#person").hide();
+                }else if(porl == "1"){
+                    $("#persons").show();
+                    $("#person").show();
+                }
+            }
+        </script>
+
+    </body>
+</html>
